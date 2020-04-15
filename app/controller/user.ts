@@ -23,7 +23,7 @@ export default class UserController extends BaseController {
     if (!this.validate(rules, params)) {
       return;
     }
-    // const result = await this.service.user.register(params);
-    // this.send(result);
+    let result = await this.service.user.register(params);
+    this.send(result);
   }
 }

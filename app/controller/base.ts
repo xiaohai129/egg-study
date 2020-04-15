@@ -18,7 +18,7 @@ export default class BaseController extends Controller {
       })
     } else {
       this.send({
-        message: '此用户不存在'
+        message: '此数据不存在'
       });
     }
   }
@@ -39,7 +39,7 @@ export default class BaseController extends Controller {
   protected send(options: {status?: number, message?: string, data?: string } = {}) {
     this.ctx.body = {
       status: options.status || 200,
-      data: options.data || '',
+      data: options.data || null,
       message: options.message || ''
     };
     return;
