@@ -13,9 +13,21 @@ interface Mysql {
   beginTransaction(): {rollback()}
 }
 
+interface DataStatus {
+  unknownError: 10000,
+  databaseError: 20000,
+  unauthorized: 401,
+  unfind: 404,
+  success: 200,
+  fail: 417,
+  error: 500,
+  paramError: 422
+}
 declare module 'egg' {
   interface Application {
-    mysql: Mysql,
-    returnData: (ctx: Context, options?: {data?: any, msg?: string, status?: number}) => {}
+    mysql: Mysql
+  }
+  interface Context {
+    dataStatus: DataStatus
   }
 }

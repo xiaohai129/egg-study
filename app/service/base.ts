@@ -1,17 +1,17 @@
 import { Service } from 'egg';
 
 export default class BaseService extends Service {
+  protected tableName: string;
+  constructor(ctx:any, tableName: string) {
+    super(ctx);
+    this.tableName = tableName;
+  }
   json(data: any, isError: boolean=false): {status: number, message: string, data: any} {
     let message = '';
-    let status = 200;
+    let status: number = this.ctx.dataStatus.success;
     if (isError) {
-      status = 500;
-      if (data.sqlState) {
-        status = parseInt(data.sqlState);
-      }
-      if (data.message) {
-        message = data.sqlMessage;
-      }
+      status = this.ctx.dataStatus.databaseError;
+      message = data.sqlMessage;
       data = null;
     }
     return {
@@ -20,19 +20,36 @@ export default class BaseService extends Service {
       data
     }
   }
-  get(tableName: string, id: number) {
-    return this.app.mysql.get(tableName, {id})
+  get(id: number) {
+    try {
+      const result = this.app.mysql.get(this.tableName, {id});
+      return this.json(result);
+    } catch(err) {
+      return this.json(err, true);
+    }
   }
-  insert(tableName: string, params: {[key: string]: any}) {
+  async insert(params: {[key: string]: any}) {
     if (params.id) {
       delete params.id;
     }
-    return this.app.mysql.insert(tableName, params);
+    try {
+      const result = await this.app.mysql.insert(this.tableName, params);
+      return this.json(result.insertId);
+    } catch(err) {
+      return this.json(err, true);
+    }
   }
-  detele(tableName: string, id: number) {
-    return this.app.mysql.delete(tableName, {id})
+
+  detele(id: number) {
+    return this.app.mysql.delete(this.tableName, {id})
   }
-  update(tableName: string, params: {id: number, [key: string]: any}) {
-    return this.app.mysql.update(tableName, params);
+
+  async update(params: {id: number, [key: string]: any}) {
+    try {
+      const result = await this.app.mysql.update(this.tableName, params);
+      return this.json(result.changedRows);
+    } catch(err) {
+      return this.json(err, true);
+    }
   }
 }
