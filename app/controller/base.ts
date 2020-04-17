@@ -40,7 +40,7 @@ export default class BaseController extends Controller {
     this.send(result);
   }
 
-  async getList(params?: any) {
+  async list(params?: any) {
     const rules = {
       pageNum: 'number',
       pageSize: 'number'
@@ -55,6 +55,11 @@ export default class BaseController extends Controller {
     params.offset = params.pageNum;
     const result = await this.service[this.serviceName].getList(params);
     this.send(result);
+  }
+
+  async getList() {
+    JSON.parse('{"id":}')
+    await this.list();
   }
 
   protected send(options: {status?: number, message?: string, data?: string } = {}, isErr = false) {

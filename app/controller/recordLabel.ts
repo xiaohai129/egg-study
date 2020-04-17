@@ -34,7 +34,7 @@ export default class RecordLabelController extends BaseController {
     params.where = {
       uid: params.uid
     }
-    await this.getList(params);
+    await this.list(params);
   }
 
   async getLabelsByIds() {
@@ -49,6 +49,6 @@ export default class RecordLabelController extends BaseController {
     params.where = {
       id: ids
     }
-    await this.getList(params);
+    await this.list(params);
   }
 }
