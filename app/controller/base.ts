@@ -6,43 +6,54 @@ export default class BaseController extends Controller {
     super(ctx);
     this.serviceName = serviceName;
   }
-  public async get() {
+  async get() {
     const rules = {
-      id: 'int'
+      id: 'id'
     };
     let params = this.ctx.params;
     if (!this.validate(rules, params)) {
       return;
     }
     const result = await this.service[this.serviceName].get(params.id);
-    if (result) {
-      this.send(result);
-    } else {
-      this.send({
-        message: '此数据不存在'
-      });
-    }
+    this.send(result);
   }
-  public async delete() {
+  async delete() {
     const rules = {
-      id: 'int'
+      id: 'id'
     };
     let params = this.ctx.params;
     if (!this.validate(rules, params)) {
       return;
     }
-    const result = this.service[this.serviceName].delete(params.id);
+    const result = await this.service[this.serviceName].delete(params.id);
     this.send(result);
   }
-  public async edit() {
+  async edit() {
     const rules = {
-      id: 'int'
+      id: 'id'
     };
     let params = this.ctx.request.body;
     if (!this.validate(rules, params)) {
       return;
     }
     const result = await this.service[this.serviceName].update(params);
+    this.send(result);
+  }
+
+  async getList(params?: any) {
+    const rules = {
+      pageNum: 'number',
+      pageSize: 'number'
+    }
+    if (!params) {
+      params = this.ctx.request.body;
+    }
+    if (!this.validate(rules, params)) {
+      return;
+    }
+    params.limit = params.pageSize;
+    params.offset = params.pageNum;
+    const result = await this.service[this.serviceName].getList(params);
     this.send(result);
   }
 

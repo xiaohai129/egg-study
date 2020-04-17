@@ -10,20 +10,25 @@ export default (appInfo: EggAppInfo) => {
   // add your egg config in here
   config.middleware = [];
 
-  config.onerror = {
+  config.onerror  = {
     all(err, ctx) {
-      console.log(ctx);
+      const body = {
+        status: 10000,
+        data: null,
+        message: '未知错误'
+      }
       ctx.set({
         "Content-Type": "application/json"
-      });
-      ctx.body = {
-        status: 10000,
-        message: '未知错误',
-        data: ''
-      }
+      })
+      ctx.body = JSON.stringify(body);
       ctx.status = 500;
     }
   }
+
+  config.validate = {
+    convert: true
+  }
+
   // add your special config in here
   const bizConfig = {
     sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
