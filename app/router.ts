@@ -5,6 +5,7 @@ export default (app: Application) => {
 
   // 用户
   router.post('/user/register', controller.user.register);
+  router.post('/user/login', controller.user.login);
   router.get('/user/:id', controller.user.get);
   router.put('/user', controller.user.modify);
 

@@ -14,7 +14,7 @@ export default class BaseController extends Controller {
     if (!this.validate(rules, params)) {
       return;
     }
-    const result = await this.service[this.serviceName].get(params.id);
+    const result = await this.service[this.serviceName].get({id: params.id});
     this.send(result);
   }
   async delete() {
@@ -39,7 +39,6 @@ export default class BaseController extends Controller {
     const result = await this.service[this.serviceName].update(params);
     this.send(result);
   }
-
   async list(params?: any) {
     const rules = {
       pageNum: 'number',
@@ -58,11 +57,10 @@ export default class BaseController extends Controller {
   }
 
   async getList() {
-    JSON.parse('{"id":}')
     await this.list();
   }
 
-  protected send(options: {status?: number, message?: string, data?: string } = {}, isErr = false) {
+  protected send(options: {status?: number, message?: string, data?: any } = {}, isErr = false) {
     let status = 200;
     let message = '';
     if (isErr) {

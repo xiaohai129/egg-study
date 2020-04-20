@@ -8,7 +8,7 @@ type CanExportFunc = AnyFunc<Promise<any>> | AnyFunc<IterableIterator<any>>;
 type AutoInstanceType<T, U = T extends CanExportFunc ? T : T extends AnyFunc ? ReturnType<T> : T> = U extends AnyClass ? InstanceType<U> : U;
 import ExportBase from '../../../app/service/base';
 import ExportRecord from '../../../app/service/record';
-import ExportRecordLabel from '../../../app/service/recordLabel;
+import ExportRecordLabel from '../../../app/service/recordLabel';
 import ExportTest from '../../../app/service/Test';
 import ExportUser from '../../../app/service/user';
 

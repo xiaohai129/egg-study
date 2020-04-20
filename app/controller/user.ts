@@ -1,5 +1,6 @@
 import BaseController from './base';
 import { Context } from 'egg';
+import { sign as JWTSign } from 'jsonwebtoken';
 
 
 export default class UserController extends BaseController {
@@ -21,6 +22,8 @@ export default class UserController extends BaseController {
     if (!this.validate(rules, params)) {
       return;
     }
+    const openid = this.ctx.header.tokenOpenid;
+    params.openid = openid;
     let result = await this.service.user.register(params);
     this.send(result);
   }
@@ -54,5 +57,51 @@ export default class UserController extends BaseController {
     }
     const result = await this.service.user.update(params);
     this.send(result);
+  }
+
+  async login() {
+    const rules = {
+      code: 'string'
+    }
+    const params = this.ctx.request.body;
+    if (!this.validate(rules, params)) {
+      return;
+    }
+    const appid = this.config.wxAppid;
+    const appSecret = this.config.wxAppSecret;
+    const code = params.code;
+    const url = `https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${appSecret}&js_code=${code}&grant_type=authorization_code`;
+    const result = await this.app.curl(url, {
+      dataType: 'json',
+    });
+    if (result.status == 200) {
+      const data = result.data;
+      const openid = data.openid;
+      const sessionKey = data.session_key;
+      const token = JWTSign({
+        openid,
+        token: openid + sessionKey
+      }, this.config.crypto.secret);
+      let userdata = await this.service.user.get({
+        openid: openid
+      })
+      let message = '';
+      let userInfo: any = {};
+      if (userdata.data) {
+        userInfo = userdata.data;
+      } else {
+        message = '用户数据不存在，请先注册';
+      }
+      userInfo.token = token;
+      this.send({
+        data: userInfo,
+        message
+      });
+    } else {
+      this.send({
+        message: '微信登录失败'
+      }, true);
+    }
+
   }
 }

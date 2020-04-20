@@ -25,7 +25,8 @@ interface DataStatus {
 }
 declare module 'egg' {
   interface Application {
-    mysql: Mysql
+    mysql: Mysql,
+    cryptoHex: function(string): string
   }
   interface Context {
     dataStatus: DataStatus

@@ -25,6 +25,7 @@ export default class BaseService extends Service {
     if (err && err.sqlMessage) {
       sqlMessage = err.sqlMessage;
     }
+    console.error(sqlMessage);
     return {
       status: this.ctx.dataStatus.databaseError,
       errno: err.errno,
@@ -32,9 +33,9 @@ export default class BaseService extends Service {
       data: null
     }
   }
-  async get(id: number) {
+  async get(params: any) {
     try {
-      const result = await this.app.mysql.get(this.tableName, {id});
+      const result = await this.app.mysql.get(this.tableName, params);
       if (result) {
         return this.json(result);
       } else {
