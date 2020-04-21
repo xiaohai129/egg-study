@@ -95,4 +95,15 @@ export default class BaseController extends Controller {
       return false;
     }
   }
+  protected filterParams(params: object, filter: string[]): object {
+    let fparams = {};
+    for (let i in filter) {
+      let key = filter[i];
+      let p = params[key];
+      if (p) {
+        fparams[key] = p;
+      }
+    }
+    return fparams
+  }
 }
