@@ -78,10 +78,7 @@ export default class UserController extends BaseController {
       const data = result.data;
       const openid = data.openid;
       const sessionKey = data.session_key;
-      const token = JWTSign({
-        openid,
-        token: openid + sessionKey
-      }, this.config.crypto.secret);
+      let token = '';
       let userdata = await this.service.user.get({
         openid: openid
       })
@@ -89,10 +86,17 @@ export default class UserController extends BaseController {
       let userInfo: any = {};
       if (userdata.data) {
         userInfo = userdata.data;
+        token = JWTSign({
+          openid,
+          token: openid + sessionKey,
+          uid: userInfo.id
+        }, this.config.crypto.secret);
+        userInfo.token = token;
       } else {
         message = '用户数据不存在，请先注册';
       }
-      userInfo.token = token;
+      delete userInfo.password;
+      delete userInfo.openid;
       this.send({
         data: userInfo,
         message

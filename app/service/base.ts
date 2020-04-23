@@ -9,7 +9,8 @@ interface dataJson {
 
 export default class BaseService extends Service {
   protected tableName: string;
-  constructor(ctx:any, tableName: string) {
+
+  constructor(ctx: any, tableName: string) {
     super(ctx);
     this.tableName = tableName;
   }
@@ -33,6 +34,15 @@ export default class BaseService extends Service {
       data: null
     }
   }
+  async query(sql: string) {
+    try {
+      const result = await this.app.mysql.query(sql);
+      return this.json(result);
+    } catch (err) {
+      return this.jsonError(err);
+    }
+  }
+
   async get(params: any) {
     try {
       const result = await this.app.mysql.get(this.tableName, params);
@@ -41,23 +51,25 @@ export default class BaseService extends Service {
       } else {
         return this.json(result, '数据不存在');
       }
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }
 
-  async getList(options: {limit: number, offset: number}){
+  async getList(options: { limit: number, offset: number, [key: string]: any }) {
     let defaultOptions: any = {
       limit: 10,
       offset: 0
     };
     defaultOptions = Object.assign(defaultOptions, options);
+    defaultOptions.offset = defaultOptions.offset * defaultOptions.limit;
     try {
       const result = await this.app.mysql.select(this.tableName, defaultOptions);
-      let countOption = {};
       let total = 0
       if (defaultOptions.where) {
         total = await this.count(defaultOptions.where);
+      } else {
+        total = await this.count();
       }
       const data = {
         total: total,
@@ -68,46 +80,46 @@ export default class BaseService extends Service {
       } else {
         return this.json(data, '没有列表数据');
       }
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }
 
-  async count(options={}) {
+  async count(options = {}) {
     try {
       const count = await this.app.mysql.count(this.tableName, options);
       return count;
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }
 
-  async insert(params: {[key: string]: any}) {
+  async insert(params: { [key: string]: any }) {
     if (params.id) {
       delete params.id;
     }
     try {
       const result = await this.app.mysql.insert(this.tableName, params);
       return this.json(result.insertId);
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }
 
   async delete(id: number) {
     try {
-      await this.app.mysql.delete(this.tableName, {id});
+      await this.app.mysql.delete(this.tableName, { id });
       return this.json(null, '数据删除成功');
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }
 
-  async update(params: {id: number, [key: string]: any}) {
+  async update(params: { id: number, [key: string]: any }) {
     try {
       const result = await this.app.mysql.update(this.tableName, params);
       return this.json(result.changedRows);
-    } catch(err) {
+    } catch (err) {
       return this.jsonError(err);
     }
   }

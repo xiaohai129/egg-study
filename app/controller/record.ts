@@ -20,4 +20,27 @@ export default class RecordController extends BaseController {
     let result = await this.service.record.insert(params);
     this.send(result);
   }
+  async getRecordList() {
+    const rules = {
+      date: 'date?',
+      pageNum: 'number',
+      pageSize: 'number'
+    }
+    let params = this.ctx.request.body;
+    if (!this.validate(rules, params)) {
+      return;
+    }
+    let uid = this.ctx.header.tokenUid;
+    let result: any;
+    if (params.date) {
+      result = await this.service.record.getListByTime(params.date, uid);
+    } else {
+      result = await this.service.record.getListOrderByTime({
+        limit: params.pageSize,
+        offset: params.pageNum,
+        uid: uid
+      });
+    }
+    this.send(result);
+  }
 }

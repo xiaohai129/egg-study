@@ -13,7 +13,7 @@ export default (app: Application) => {
   router.get('/record/:id', controller.record.get);
   router.post('/record', controller.record.add);
   router.put('/record', controller.record.edit);
-  router.post('/record/list', controller.record.getList);
+  router.post('/record/list', controller.record.getRecordList);
 
   // 学习记录标签
   router.post('/record/label', controller.recordLabel.add);

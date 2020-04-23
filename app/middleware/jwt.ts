@@ -15,7 +15,7 @@ function sendError(ctx: any, message?: string) {
 }
 
 module.exports = options => {
-  return async function(ctx, next) {
+  return async function (ctx, next) {
     if (noPaths.indexOf(ctx.path) >= 0) {
       await next();
     } else {
@@ -28,11 +28,12 @@ module.exports = options => {
           const signOpenid = sign.openid
           if (signToken.includes(signOpenid)) {
             ctx.header.tokenOpenid = signOpenid;
+            ctx.header.tokenUid = sign.uid;
             await next();
           } else {
             sendError(ctx, 'token已失效');
           }
-        } catch(err) {
+        } catch (err) {
           sendError(ctx);
         }
       } else {
