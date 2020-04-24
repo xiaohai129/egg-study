@@ -5,13 +5,14 @@ const noPaths = [
   '/user/login'
 ];
 
-function sendError(ctx: any, message?: string) {
+function sendError(ctx: any, message?: string): boolean {
   ctx.status = 200;
   ctx.body = {
     status: 401,
     data: null,
     message: message || '用户信息验证失败'
   }
+  return false;
 }
 
 module.exports = options => {
@@ -26,18 +27,20 @@ module.exports = options => {
           const sign = JWTVerify(token, config.crypto.secret);
           const signToken = sign.token || '';
           const signOpenid = sign.openid
-          if (signToken.includes(signOpenid)) {
+          if (!sign.uid || !signToken.includes(signOpenid)) {
+            return sendError(ctx);
+          } else {
             ctx.header.tokenOpenid = signOpenid;
             ctx.header.tokenUid = sign.uid;
-            await next();
-          } else {
-            sendError(ctx, 'token已失效');
           }
         } catch (err) {
-          sendError(ctx);
+          if (err.name == 'JsonWebTokenError') {
+            return sendError(ctx);
+          }
         }
+        await next();
       } else {
-        sendError(ctx);
+        return sendError(ctx);
       }
     }
   }

@@ -11,9 +11,10 @@ export default (app: Application) => {
 
   // 学习记录
   router.get('/record/:id', controller.record.get);
-  router.post('/record', controller.record.add);
+  router.post('/record', controller.record.addRecord);
   router.put('/record', controller.record.edit);
   router.post('/record/list', controller.record.getRecordList);
+  router.post('/record/statis', controller.record.getMonthStatis);
 
   // 学习记录标签
   router.post('/record/label', controller.recordLabel.add);

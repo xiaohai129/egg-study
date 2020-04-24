@@ -14,7 +14,7 @@ export default (appInfo: EggAppInfo) => {
 
   config.proxy = true;
 
-  config.onerror  = {
+  config.onerror = {
     all(err, ctx) {
       const body = {
         status: 10000,
@@ -24,7 +24,7 @@ export default (appInfo: EggAppInfo) => {
       ctx.set({
         "Content-Type": "application/json"
       })
-      ctx.body = JSON.stringify(body);
+      ctx.body = body;
       ctx.status = 500;
     }
   }
@@ -32,9 +32,9 @@ export default (appInfo: EggAppInfo) => {
   config.validate = {
     convert: true
   }
-  
+
   config.crypto = {
-    secret:  'dulinhai'
+    secret: 'dulinhai'
   };
 
   config.mysql = {

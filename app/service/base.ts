@@ -34,9 +34,9 @@ export default class BaseService extends Service {
       data: null
     }
   }
-  async query(sql: string) {
+  async query(sql: string, values?: any[]) {
     try {
-      const result = await this.app.mysql.query(sql);
+      const result = await this.app.mysql.query(sql, values);
       return this.json(result);
     } catch (err) {
       return this.jsonError(err);
@@ -85,9 +85,9 @@ export default class BaseService extends Service {
     }
   }
 
-  async count(options = {}) {
+  async count(where = {}) {
     try {
-      const count = await this.app.mysql.count(this.tableName, options);
+      const count = await this.app.mysql.count(this.tableName, where);
       return count;
     } catch (err) {
       return this.jsonError(err);

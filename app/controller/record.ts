@@ -4,7 +4,7 @@ export default class RecordController extends BaseController {
   constructor(ctx) {
     super(ctx, 'record');
   }
-  async add() {
+  async addRecord() {
     const rules = {
       title: 'string',
       content: 'string',
@@ -16,13 +16,15 @@ export default class RecordController extends BaseController {
     if (!this.validate(rules, params)) {
       return;
     }
+    let uid = this.ctx.header.tokenUid;
     params = this.filterParams(params, ['title', 'content', 'taskId', 'time', 'label']);
+    params.uid = uid;
     let result = await this.service.record.insert(params);
     this.send(result);
   }
   async getRecordList() {
     const rules = {
-      date: 'date?',
+      date: 'number?',
       pageNum: 'number',
       pageSize: 'number'
     }
@@ -41,6 +43,18 @@ export default class RecordController extends BaseController {
         uid: uid
       });
     }
+    this.send(result);
+  }
+  async getMonthStatis() {
+    const rules = {
+      date: 'number',
+    }
+    let params = this.ctx.request.body;
+    if (!this.validate(rules, params)) {
+      return;
+    }
+    let uid = this.ctx.header.tokenUid;
+    let result = await this.service.record.getMonthStatis(uid, params.date);
     this.send(result);
   }
 }
