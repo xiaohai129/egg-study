@@ -28,7 +28,7 @@
     "egg-scripts": "^2.6.0",
     "egg-validate": "^2.0.2",
     "i18n": "^0.8.6",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
